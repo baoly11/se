@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+    Search
+{% endblock %}
+
+{% block body %}
+    <form action="{{ url_for('get') }}" method="post">
+        <p>
+            From:
+            <br><input type="number" name="fday" placeholder="Day">
+                <input type="number" name="fmonth" placeholder="Month">
+                <input type="number" name="fyear" placeholder="Year">
+                <input type="number" name="fhour" placeholder="Hour">
+                <input type="number" name="fminute" placeholder="Minute">
+        </p>
+        <p>
+            To:
+            <br><input type="number" name="tday" placeholder="Day">
+                <input type="number" name="tmonth" placeholder="Month">
+                <input type="number" name="tyear" placeholder="Year">
+                <input type="number" name="thour" placeholder="Hour">
+                <input type="number" name="tminute" placeholder="Minute">
+        </p>
+        <button>
+            Search
+        </button>
+    </form>
+{% endblock %}
