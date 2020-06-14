@@ -49,37 +49,36 @@ def print_msg(client, userdata, message):
     data = str(message.payload.decode("utf-8"))
     data = json.loads(data)
     t = datetime.datetime.now()
-    if data["ID"] == 1:
+    if data["ID"] == 2:
         print("running...")
-        if int(data["value"][0]) > 95 or int(data["value"][1]) > 95:
-            client.publish("Control", "ON")
-        if check(1):
-            # conn = sqlite3.connect('warehouse.db')
-            # cursor = conn.cursor()
-            # cursor.execute(f"""INSERT INTO test1 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"][0]}, {data["value"][1]})""")
-            # conn.commit()
-            # cursor.close()
-            # conn.close()
-
-            db.execute("INSERT INTO temp_air (device_id, temperature, humidity, time) VALUES (:device_id, :temperature, :humidity, :time)",
-                       {"device_id": data["ID"], "temperature": data["value"][0], "humidity": data["value"][1], "time": t.strftime('%Y-%m-%d %H:%M:%S')})
-            db.commit()
-            print(f"""Temperature: {data["value"][0]} Humidity: {data["value"][1]}""")
-    # else:
-    #     print("hi2")
-    #     if int(data["value"]) > 95:
-    #         client.publish("Control","ON")
-    #     if check(2):
+    #     if int(data["value"][0]) > 95 or int(data["value"][1]) > 95:
+    #         client.publish("Control", "ON")
+    #     if check(1):
     #         # conn = sqlite3.connect('warehouse.db')
     #         # cursor = conn.cursor()
-    #         # cursor.execute(f"""INSERT INTO test2 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"]})""")
+    #         # cursor.execute(f"""INSERT INTO test1 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"][0]}, {data["value"][1]})""")
     #         # conn.commit()
     #         # cursor.close()
     #         # conn.close()
-    #         db.execute("INSERT INTO light (device_id, light, time) VALUES (:device_id, :light, :time)",
-    #                    {"device_id": data["ID"], "light": data["value"],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
+    #
+    #         db.execute("INSERT INTO temp_air (device_id, temperature, humidity, time) VALUES (:device_id, :temperature, :humidity, :time)",
+    #                    {"device_id": data["ID"], "temperature": data["value"][0], "humidity": data["value"][1], "time": t.strftime('%Y-%m-%d %H:%M:%S')})
     #         db.commit()
-    #         print(f"""Intensity: {data["value"]}""")
+    #         print(f"""Temperature: {data["value"][0]} Humidity: {data["value"][1]}""")
+    # else:
+        if int(data["value"]) > 95:
+            client.publish("Control","ON")
+        if check(2):
+            # conn = sqlite3.connect('warehouse.db')
+            # cursor = conn.cursor()
+            # cursor.execute(f"""INSERT INTO test2 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"]})""")
+            # conn.commit()
+            # cursor.close()
+            # conn.close()
+            db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",
+                       {"device_id": data["ID"], "light": data["value"],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
+            db.commit()
+            print(f"""Intensity: {data["value"]}""")
     # print(data["ID"], data["value"])
 
 sub.callback(print_msg, "Temp/Air/Light", hostname ="52.230.126.225")
