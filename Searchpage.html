@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SearchPage</title>
+    <title> SearchPage</title>
 <style>
 * {
     box-sizing: border-box;
@@ -146,26 +146,22 @@ input, label {
     </div>
 
     <div class="timeform">
-    <form action="{{ url_for('get') }}" method="post">
+    <form>
         <div class="Fromtime">
-            <label><h4>From:</h4> </label>
-            <input type="number" name="fday" placeholder="Day">
-            <input type="number" name="fmonth" placeholder="Month">
-            <input type="number" name="fyear" placeholder="Year">
-            <input type="number" min="0" max="23" name="fhour" placeholder="23">:
-            <input type="number" min="0" max="59" name="fminute" placeholder="59">
-
+            <label for = "Fromdate"><h4>From:</h4> </label>
+            <input type="date" id="Fromdate" name="Fromdate">
+            <input type="number" min="0" max="23" placeholder="23">:
+            <input type="number" min="0" max="59" placeholder="00">:
+            <input type="number" min="0" max="59" placeholder="00">
         </div>
         <div class="Totime">
-            <label><h4>To:</h4> </label>
-            <input type="number" name="tday" placeholder="Day">
-            <input type="number" name="tmonth" placeholder="Month">
-            <input type="number" name="tyear" placeholder="Year">
-            <input type="number" min="0" max="23" name="fhour" placeholder="1">:
-            <input type="number" min="0" max="59" name="fminute" placeholder="01">
-
+            <label for = "Todate"><h4>To:</h4> </label>
+            <input type="date" id="Todate" name="Todate">
+            <input type="number" min="0" max="23" placeholder="23">:
+            <input type="number" min="0" max="59" placeholder="00">:
+            <input type="number" min="0" max="59" placeholder="00">
         </div>
-        <button>Search</button>
+        <input type ="submit">
     </form>
     </div>
     <script>
