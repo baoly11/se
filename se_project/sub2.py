@@ -8,10 +8,10 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-broker_address = "52.230.126.225"
-client = mqtt.Client("TurnOn1")
-client.connect(broker_address)
-client.subscribe("Control")
+# broker_address = "52.230.126.225"
+# client = mqtt.Client("TurnOn1")
+# client.connect(broker_address)
+# client.subscribe("Control")
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -49,36 +49,26 @@ def print_msg(client, userdata, message):
     data = str(message.payload.decode("utf-8"))
     data = json.loads(data)
     t = datetime.datetime.now()
-    if data["ID"] == 2:
+    if data[0]["device_id"] == 'Light':
         print("running...")
     #     if int(data["value"][0]) > 95 or int(data["value"][1]) > 95:
     #         client.publish("Control", "ON")
     #     if check(1):
-    #         # conn = sqlite3.connect('warehouse.db')
-    #         # cursor = conn.cursor()
-    #         # cursor.execute(f"""INSERT INTO test1 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"][0]}, {data["value"][1]})""")
-    #         # conn.commit()
-    #         # cursor.close()
-    #         # conn.close()
-    #
     #         db.execute("INSERT INTO temp_air (device_id, temperature, humidity, time) VALUES (:device_id, :temperature, :humidity, :time)",
     #                    {"device_id": data["ID"], "temperature": data["value"][0], "humidity": data["value"][1], "time": t.strftime('%Y-%m-%d %H:%M:%S')})
     #         db.commit()
     #         print(f"""Temperature: {data["value"][0]} Humidity: {data["value"][1]}""")
     # else:
-        if int(data["value"]) > 95:
-            client.publish("Control","ON")
-        if check(2):
-            # conn = sqlite3.connect('warehouse.db')
-            # cursor = conn.cursor()
-            # cursor.execute(f"""INSERT INTO test2 VALUES(datetime('now', 'localtime'),{data["ID"]} , {data["value"]})""")
-            # conn.commit()
-            # cursor.close()
-            # conn.close()
-            db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",
-                       {"device_id": data["ID"], "light": data["value"],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
-            db.commit()
-            print(f"""Intensity: {data["value"]}""")
-    # print(data["ID"], data["value"])
+    #     if int(data["value"]) > 95:
+    #         client.publish("Control","ON")
+    #     if check(2):
+    #         db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",
+    #                    {"device_id": data["ID"], "light": data["value"],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
+    #         db.commit()
+    #         print(f"""Intensity: {data["value"]}""")
+        db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",
+                   {"device_id": 2, "light": data[0]["values"][0],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
+        db.commit()
+        print(f"""Intensity: {data[0]["values"][0]}""")
 
-sub.callback(print_msg, "Temp/Air/Light", hostname ="52.230.126.225")
+sub.callback(print_msg, "Topic/Light", hostname="13.76.250.158", auth={'username':"BKvm2", 'password':"Hcmut_CSE_2020"})
