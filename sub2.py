@@ -35,8 +35,8 @@ def check(a):
             return True
     else:
         key2 -= 1
-        if key2 <= 0:
-            key2 = 11
+        if key2 < 0:
+            key2 = 5
             return True
     return False
 
@@ -68,12 +68,11 @@ def print_msg(client, userdata, message):
     # get real data
     # if data[0]["values"][0] > light_threshold:
     #     device_control()
-    # if check(1):
-    #     try:
-    #         db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",{"device_id": 2, "light": data[0]["values"][0],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
-    #         db.commit()
-    #     finally:
-    #         db.close()
+    # try:
+    #     db.execute("INSERT INTO light (device_id, light_intensity, time) VALUES (:device_id, :light, :time)",{"device_id": 2, "light": data[0]["values"][0],"time": t.strftime('%Y-%m-%d %H:%M:%S')})
+    #     db.commit()
+    # finally:
+    #     db.close()
     # print(f"""Intensity: {data[0]["values"][0]}""")
 
 

@@ -31,8 +31,8 @@ def check(a):
             return True
     else:
         key2 -= 1
-        if key2 <= 0:
-            key2 = 19
+        if key2 < 0:
+            key2 = 5
             return True
     return False
 
@@ -68,15 +68,13 @@ def print_msg(client, userdata, message):
     # get real data
     # if data[0]["values"][0] > temp_threshold or data[0]["values"][1] > humi_threshold:
     #     device_control()
-    # if check(1):
-    #     try:
-    #         db.execute("INSERT INTO temp_air (device_id, temperature, humidity, time) VALUES (:device_id, :temperature, :humidity, :time)",
-    #                    {"device_id": 1, "temperature": data[0]["values"][0], "humidity": data[0]["values"][1], "time": t.strftime('%Y-%m-%d %H:%M:%S')})
-    #         db.commit()
-    #     finally:
-    #         db.close()
+    # try:
+    #     db.execute("INSERT INTO temp_air (device_id, temperature, humidity, time) VALUES (:device_id, :temperature, :humidity, :time)",
+    #                {"device_id": 1, "temperature": data[0]["values"][0], "humidity": data[0]["values"][1], "time": t.strftime('%Y-%m-%d %H:%M:%S')})
+    #     db.commit()
+    # finally:
+    #     db.close()
     # print(f"""Temperature: {data[0]["values"][0]} Humidity: {data[0]["values"][1]}""")
-    # emit('update realtime', {'temp':  data[0]["values"][0], 'humi': data[0]["values"][1]}, broadcast = True)
 
 
 def device_control():
