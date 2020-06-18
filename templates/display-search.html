@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block heading %}
+    Result
+{% endblock %}
+
+{% block body %}
+    <ul>
+        {% for x in r %}
+            <li>
+                {{ x }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
