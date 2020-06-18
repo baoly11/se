@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded',()=>{
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-    socket.emit('update');
+//    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+//    socket.emit('update');
     getDataHourly();
 
     function getDataHourly(){
@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded',()=>{
                 h = data.device.humidity;
                 l = data.device.light;
                 console.log(t,h,l);
-//                document.querySelector('#temperature').innerHTML = temp_info;
-//                document.querySelector('#humidity').innerHTML = humid_info;
-//                document.querySelector('#light').innerHTML = light_info;
+                document.querySelector('#temperature').innerHTML = temp_info;
+                document.querySelector('#humidity').innerHTML = humid_info;
+                document.querySelector('#light').innerHTML = light_info;
                 if(temp_info > t || humid_info > h || light_info > l){
                     alert("Storage condition is overlimit!!!");
                 }
@@ -35,11 +35,11 @@ document.addEventListener('DOMContentLoaded',()=>{
         const data = new FormData();
         request.send(data);
     }
-    socket.on('update realtime', function(data){
-        temp = data.temp;
-        humi = data.humi;
-         document.querySelector('#temperature').innerHTML = temp;
-            document.querySelector('#humidity').innerHTML = humi;
-    });
+//    socket.on('update realtime', function(data){
+//        temp = data.temp;
+//        humi = data.humi;
+//         document.querySelector('#temperature').innerHTML = temp;
+//            document.querySelector('#humidity').innerHTML = humi;
+//    });
 
 });
