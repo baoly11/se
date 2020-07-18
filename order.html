@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="{{ url_for('static', filename='get-order.js') }}"></script>
+        <title>
+            Order
+        </title>
+    </head>
+    <body>
+        <h1>
+            Order
+        </h1>
+        <form id="form">
+            <input id="id" autocomplete="off" autofocus placeholder="Order ID">
+            <input type="submit" value="Get Order">
+        </form>
+        <br>
+        <div id="r_id">ID:</div>
+        <div id="order_name">Name:</div>
+        <div id="status">Completed:</div>
+        <ul id="item_list"></ul>
+    </body>
+</html>
