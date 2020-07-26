@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="{{ url_for('static', filename='get-order.js') }}"></script>
+        <title>
+            Order
+        </title>
+    </head>
+    <body>
+        <h1>
+            Order
+        </h1>
+        <form id="form">
+            <input id="id" autocomplete="off" autofocus placeholder="Order ID">
+            <input type="submit" value="Get Order">
+        </form>
+        <br>
+        <div id="r_id">ID:</div>
+        <div id="order_name">Name:</div>
+        <div id="status">Completed:</div>
+        <ul id="item_list"></ul>
+
+        <a href="{{ url_for('add_item_to_order') }}">
+        <button id="addItem" disabled>Add Item</button>
+        </a>
+
+        <a href="{{ url_for('remove_item_from_order') }}">
+        <button id="removeItem" disabled>Remove Item</button>
+        </a>
+
+        <a href="{{ url_for('update_item_quantity_in_order') }}">
+        <button id="updateQuantity" disabled>Update Quantity</button>
+        </a>
+
+        <p>
+
+        </p>
+        <div class="op">
+            <button id="confirm" disabled>Confirm</button>
+            <button id="check" disabled>Check</button>
+            <button id="delete" disabled>Delete</button>
+        </div>
+</html>

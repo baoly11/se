@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="{{ url_for('static', filename='remove-item-from-order.js') }}"></script>
+        <title>
+            Remove Item
+        </title>
+    </head>
+    <body>
+        <h1>
+            Remove Item to Order {{ x }}
+        </h1>
+        <form id="form">
+            <input id="itemId" autocomplete="off" autofocus placeholder="Item ID">
+            <input type="submit" value="Remove">
+        </form>
+    </body>
+</html>
