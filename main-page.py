@@ -3,13 +3,12 @@ from flask import Flask, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask_socketio import SocketIO, emit
-# import sqlite3
+# from flask_socketio import SocketIO, emit
 from datetime import datetime
+# import requests
 
 
 app = Flask(__name__)
-socketio = SocketIO(app)
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -27,6 +26,7 @@ db = scoped_session(sessionmaker(bind=engine))
 current_user = 'Guest'
 user_name = 'user1'
 password = "12345"
+current_order_id = None
 
 
 @app.route("/")
@@ -136,7 +136,262 @@ def update():
     db.commit()
     return jsonify({"success":True, "response":"Device adjust successfully!"})
 
+@app.route("/order")
+def order():
+    return render_template("order.html")
 
 
-if __name__== "__main__":
-    socketio.run(app)
+@app.route("/get-order", methods=["POST"])
+def get_order():
+    global current_order_id
+    id = request.form.get("id")
+    order = search_order(id)
+    if not order:
+        current_order_id = None
+        return jsonify({"success": True, "found": False})
+    current_order_id = id
+    return jsonify({"success": True,
+                    "id": order[0],
+                    "name": order[1],
+                    "date": order[2],
+                    "status": order[3],
+                    "item": order[4],
+                    "quantity": order[5],
+                    "found": True})
+
+@app.route("/check-order", methods=["POST"])
+def check_order():
+    id = request.form.get("id")
+    print(f"check order {id}")
+    result = check_complete_order(id)
+    return jsonify({"success": True,
+                    "msg":result[1]})
+
+@app.route("/confirm-order", methods=["POST"])
+def confirm_order():
+    id = request.form.get("id")
+    print(f"check order {id}")
+    result = check_complete_order(id, True)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+@app.route("/delete-order", methods=["POST"])
+def delete_order():
+    id = request.form.get("id")
+    print(f"deleting order {id}")
+    result = del_order(id)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+@app.route("/add-item-to-order")
+def add_item_to_order():
+    global current_order_id
+    if current_order_id == None:
+        return "Please select a order first!"
+    return render_template("add-item-to-order.html", x = current_order_id )
+
+@app.route("/adding-item", methods=["POST"])
+def adding_item_to_order():
+    global current_order_id
+    item_id = request.form.get("itemId")
+    quantity = request.form.get("quantity")
+    print(item_id)
+    print(quantity)
+    result = add_item_to_order_do(current_order_id, item_id, quantity)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+@app.route("/remove-item-from-order")
+def remove_item_from_order():
+    global current_order_id
+    if current_order_id == None:
+        return "Please select a order first!"
+    return render_template("remove-item-from-order.html", x = current_order_id )
+
+@app.route("/removing-item", methods=["POST"])
+def removing_item_from_order_do():
+    global current_order_id
+    item_id = request.form.get("itemId")
+    result = remove_item_from_order_do(current_order_id, item_id)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+@app.route("/update-item-quantity-in-order")
+def update_item_quantity_in_order():
+    global current_order_id
+    if current_order_id == None:
+        return "Please select a order first!"
+    return render_template("update-item-quantity-in-order.html", x = current_order_id )
+
+@app.route("/updating-item", methods=["POST"])
+def update_item_quantity_in_order_do():
+    global current_order_id
+    item_id = request.form.get("itemId")
+    quantity = request.form.get("quantity")
+    result = update_item_quantity_in_order_do(current_order_id, item_id, quantity)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+
+def search_order(id):
+    # Join order_info and item_in_order to get all the information
+    info = db.execute(
+        f"SELECT * FROM (SELECT * FROM order_info WHERE id={id}) AS O LEFT JOIN item_in_order ON O.id=item_in_order.order_id").fetchall()
+    if not info:
+        print("Cant find this order.")
+        return False
+    # Get ID to Name list of item
+    item_id_name = dict(db.execute("SELECT item_id,name FROM item ").fetchall())
+    db.close()
+    # Turn all the info in to a list [ID, name, date create, complete status, item_name_list, quantity_list, item_id_list]
+    i_n = []
+    q = []
+    i_i = []
+    for x in info:
+        if x[5] is not None:
+            i_n.append(item_id_name[x[5]])
+            q.append(x[6])
+            i_i.append(x[5])
+    result = [info[0][0], info[0][1], info[0][2], info[0][3], i_n, q, i_i]
+    # print(result)
+    return result
+
+
+def check_complete_order(id, do = False):
+    info = search_order(id)
+    if not info:
+        print("Order does not exist")
+        return (False, "Order does not exist")
+    # Check if order is already completed or not
+    if info[3]:
+        print("Order is already completed")
+        return (False, "Order is already completed")
+    if len(info[4]) > 0:
+        # Get id_to_name, id_to_quantity, item_order list
+        item = db.execute("SELECT item_id,name,quantity FROM item ").fetchall()
+        item_id_quantity = dict([(x[0],x[2]) for x in item])
+        item_id_name = dict(zip(info[6], info[4]))
+        check_list = dict(zip(info[6], info[5]))
+        # Check the order
+        for item_id in check_list:
+            if item_id_quantity[item_id] < check_list[item_id]:
+                print(f"We dont have enough {item_id_name[item_id]} for order with ID: {id}")
+                return (False, f"We dont have enough {item_id_name[item_id]} for order with ID: {id}")
+        if do:
+            for item_id in check_list:
+                new_quantity = item_id_quantity[item_id] - check_list[item_id]
+                db.execute(f""" UPDATE item SET quantity={new_quantity} WHERE item_id='{item_id}' """)
+                db.commit()
+    msg = ''
+    if do:
+        db.execute(f"""UPDATE order_info SET status=true WHERE id='{id}'""")
+        db.commit()
+        print(f"Order with ID: {id} is completed")
+        msg = f"Order with ID: {id} is completed"
+    else:
+        print(f"We have enough item for the order with ID: {id}")
+        msg = f"We have enough item for the order with ID: {id}"
+    db.close()
+    return (True, msg)
+
+def del_order(id):
+    # Check if the order exist
+    info = search_order(id)
+    if not info:
+        print("order does not exist")
+        return False
+    if info[3]:
+        print("Cannot delete order - order already complte")
+        return (False, "Cannot delete order - order already complte")
+    # Delete record from order_info
+    db.execute(f"DELETE FROM order_info WHERE id={id}")
+    db.commit()
+    # Delete record from item_in_order
+    db.execute(f"DELETE FROM item_in_order WHERE order_id={id}")
+    db.commit()
+    db.close()
+    print(f"Deleted order with ID: {id}")
+    return (True, f"Deleted order with ID: {id}")
+
+def add_item_to_order_do(id, item, quantity):
+    # Get the information of the order
+    info = search_order(id)
+    print(info)
+    if not info:
+        print("Order does not exist")
+        return (False, "Order does not exist")
+    if info[3]:
+        print("Cannot add - Order is already completed")
+        return (False, "Cannot add - Order is already completed")
+    # Check if item is in storage
+    item_id_name = dict(db.execute("SELECT item_id,name FROM item ").fetchall())
+    if item not in item_id_name:
+        print(f"{item} is not in storage")
+        return (False, f"{item} is not in storage")
+    # Check if the order already has that item
+    if len(info[6]) > 0:
+        if item in info[6]:
+            print(f"{item} is already in order")
+            return (False, f"{item} is already in order")
+    db.execute(f"INSERT INTO item_in_order (order_id, item_id, item_quantity) VALUES (:order_id, :item_id, :item_quantity)", {"order_id": id, "item_id": item, "item_quantity": quantity})
+    db.commit()
+    db.close
+    print("done")
+    return (True, "Done")
+
+def remove_item_from_order_do(id, item):
+    # Get the information of the order
+    info = search_order(id)
+    if not info:
+        print("Order does not exist")
+        return (False, "Order does not exist")
+    # Check if the order is completed
+    if info[3]:
+        print("Cannot update - Order is already completed")
+        return (False, "Cannot update - Order is already completed")
+    # Check if item is in order
+    if len(info[6]) > 0:
+        if item not in info [6]:
+            print("Item is not in order")
+            return (False, "Item is not in order")
+    else:
+        print("Item is not in order")
+        return (False, "Item is not in order")
+    # Get id of the item
+    # item_id = info[6][info[4].index(item)]
+    db.execute(f"DELETE FROM item_in_order WHERE order_id={id} AND item_id='{item}'")
+    db.commit()
+    db.close()
+    print("done")
+    return (True, "done")
+
+def update_item_quantity_in_order_do(id, item, quantity):
+    # Get the information of the order
+    info = search_order(id)
+    if not info:
+        print("Order does not exist")
+        return False
+    # Check if the order is completed
+    if info[3]:
+        print("Cannot update - Order is already completed")
+        return False
+    # Check if item is in order
+    if len(info[6]) > 0:
+        if item not in info [6]:
+            print("Item is not in order")
+            return (False, "Item is not in order")
+    else:
+        print("Item is not in order")
+        return (False, "Item is not in order")
+    # Get id of the item
+    # item_id = info[6][info[4].index(item)]
+    db.execute(f"UPDATE item_in_order SET item_quantity={quantity} WHERE order_id={id} AND item_id='{item}'")
+    db.commit()
+    db.close()
+    print("done")
+    return (True, "Done")
