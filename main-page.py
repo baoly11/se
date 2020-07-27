@@ -138,6 +138,9 @@ def update():
 
 @app.route("/order")
 def order():
+    global current_user
+    if current_user == 'Guest':
+        return "Please login!"
     return render_template("order.html")
 
 
@@ -236,6 +239,101 @@ def update_item_quantity_in_order_do():
     return jsonify({"success": True,
                     "done": result[0],
                     "msg": result[1]})
+
+@app.route("/create-order")
+def create_order():
+    return render_template("create-order.html")
+
+@app.route("/creating-order", methods=["POST"])
+def creating_order():
+    name = request.form.get("name")
+    result = create_order_do(name, [])
+    print(name)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
+
+@app.route("/item")
+def index1():
+    return render_template("import_items.html")
+
+
+@app.route("/manage")
+def manage():
+    try:
+        items = db.execute("SELECT * FROM item ").fetchall()
+    finally:
+        db.close()
+    return render_template("manage_items.html", items=items)
+
+
+@app.route("/import", methods=["POST"])
+def import_product():
+    import_time = str(datetime.now().replace(microsecond=0))
+    if len(str(request.form.get("item_id"))) != 6:
+        return jsonify({"success": True, "response": "Wrong ID length"})
+    try:
+        item_id = str(request.form.get("item_id"))
+        item_name = str(request.form.get("item_name"))
+        item_quantity = int(request.form.get("item_quantity"))
+        import_man = str(request.form.get("import_man"))
+    except:
+        return jsonify({"success": True, "response": "Wrong input type!"})
+
+    db.execute(
+        "INSERT INTO item_import (item_id, item_name, item_quantity, import_time, import_man) VALUES (:item_id, :item_name, :item_quantity, :import_time, :import_man)",
+        {"item_id": item_id, "item_name": item_name, "item_quantity": item_quantity, "import_time": import_time,
+         "import_man": import_man})
+    db.commit()
+
+
+
+    db.execute("UPDATE item SET quantity = quantity + :item_quantity WHERE item_id = :item_id ",
+               {"item_quantity": item_quantity, "item_id": item_id})
+    db.commit()
+    return jsonify({"success": True, "response": "Done!"})
+
+
+@app.route("/updateItems", methods=["POST"])
+def updateItems():
+    try:
+        items = db.execute("SELECT * FROM item ").fetchall()
+    finally:
+        db.close()
+    print(items)
+
+    lst = []
+
+    for item in items:
+        lst.append(dict(item))
+    print(lst)
+
+    return jsonify({"success": True, "items": lst})
+
+
+@app.route("/specific_item/<string:id>")
+def specific_item(id):
+    try:
+        info = db.execute("SELECT * FROM item_import WHERE item_id = :item_id ", {"item_id": id}).fetchall()
+    finally:
+        db.close()
+    return render_template('specific_item.html', info=info)
+
+
+
+
+
+
+####################################################################################################################################################################################
+
+
+
+
+
+
+
+
+
 
 
 def search_order(id):
@@ -395,3 +493,25 @@ def update_item_quantity_in_order_do(id, item, quantity):
     db.close()
     print("done")
     return (True, "Done")
+
+def create_order_do(name, item_list):
+    # Check if all item in new order exist in storage
+    if len(item_list) > 0:
+        check_list = dict(db.execute("SELECT name,item_id FROM item ").fetchall())
+        for item in item_list:
+            if item not in check_list:
+                print(f"Fail to add order {name} because storage don't have {item}")
+                return (False, f"Fail to add order {name} because storage don't have {item}")
+    # Create new record in order_info
+    t = datetime.now()
+    db.execute("INSERT INTO order_info (name, time, status) VALUES (:name, :time, :status)", {"name": name, "time": t.strftime('%Y-%m-%d %H:%M:%S'), "status": False})
+    db.commit()
+    # Get the new ID from order_info to add record of item to item_in_order
+    new_id = db.execute("SELECT id FROM order_info WHERE id IN (SELECT MAX(id) FROM order_info)").fetchone()[0]
+    if len(item_list) > 0:
+        for item in item_list:
+            db.execute("INSERT INTO item_in_order (order_id, item_id, item_quantity) VALUES (:order_id, :item_id, :item_quantity)",{"order_id": new_id, "item_id": check_list[f"{item}"], "item_quantity": item_list[f"{item}"]})
+            db.commit()
+    db.close()
+    print(f"Finish adding order {name} with id: {new_id}")
+    return (True, f"Finish adding order {name} with id: {new_id}")
