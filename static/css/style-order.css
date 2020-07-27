@@ -1,0 +1,216 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.header {
+    padding: 10px;
+    text-align: left;
+    color: #FFC000;
+}
+
+.header h1 {
+    font-size: 60px;
+    text-align: center;
+}
+
+.row1 {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE10 */
+    flex-wrap: wrap;
+    background: white;
+}
+.side1 {
+    -ms-flex: 85%; /* IE10 */
+    flex: 85%;
+    padding: 20px;
+
+}
+.main1 {
+    -ms-flex: 15%; /* IE10 */
+    flex: 15%;
+    padding: 0px;
+    background-color: black;
+}
+
+.navbar {
+  overflow: hidden;
+  background-color: #E4F2B5;
+}
+
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.navbar button.dropbtn {
+    background-color: #FFC000;
+    color: white;
+}
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: black;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.navbar a.right {
+    float: right;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn {
+  background-color: #FFE8CB;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #E4F2B5;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: #FFE8CB;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a.active {
+    background-color: #FFC000;
+    color: white;
+}
+
+.logo-img {
+    float: left;
+    position: relative;
+    margin: 10px 15px 15px 10px;
+}
+
+input[type=text], select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+input[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+button:disabled{
+  background-color: #b3b3cc;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:enabled{
+  background-color: #45a049;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.op button{
+  display: inline-block;
+  width: 150px;
+  height: 50px;
+
+}
+
+.container {
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  width: 100%;
+ 
+}
+
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+.col-55 {
+  float: left;
+  width: 55%;
+  margin-top: 6px;
+}
+.col-20 {
+  float: left;
+  width: 20%;
+  margin-top: 6px;
+}
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .col-25, .col-55, .col-20, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
