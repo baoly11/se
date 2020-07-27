@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     function getDataHourly(){
         setInterval(() => {
             updateInforamtion();
-        }, 1000*3);
+        }, 1000*1);
     }
     function updateInforamtion(){
         const request = new XMLHttpRequest();
