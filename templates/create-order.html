@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="{{ url_for('static', filename='update-item-quantity-in-order.js') }}"></script>
+    <script src="{{ url_for('static', filename='create-order.js') }}"></script>
     <title>
-        Update Item
+        Create Order
     </title>
-<!--    <link rel="stylesheet" type="text/css" href= "css/style-update-item-quantity-in-order.css" />-->
-    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-update-item-quantity-in-order.css') }}" />
+<!--    <link rel="stylesheet" type="text/css" href= "css/style-create-order.css" />-->
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-create-order.css') }}" />
 
 </head>
 <body background="{{ url_for('static', filename='Picture1.png') }}">
@@ -25,19 +25,19 @@
             <button class="dropbtn" > Order
             </button>
             <div class="dropdown-content">
-                <a href="#">Add order</a>
-                <a href="#" class="active">Search order</a>
+                <a href="#" class="active">Add order</a>
+                <a href="{{ url_for('order') }}" >Search order</a>
             </div>
         </div>
     </div>
     <div class="container">
     <h1>
-        Update Item in Order {{ x }}
+        Add New Order
     </h1>
     <form id="form">
-        <input type="text" id="itemId" autocomplete="off" autofocus placeholder="Item ID">
-        <input type="text" id="quantity" autocomplete="off" autofocus placeholder="Quantity">
-        <input type="submit" value="Update">
+        <input type="text" id="name" autocomplete="off" autofocus placeholder="Order Name here">
+        <p></p>
+        <input type="submit" value="Add Order">
     </form>
     </div>
 </body>

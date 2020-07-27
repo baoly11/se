@@ -1,18 +1,44 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="{{ url_for('static', filename='remove-item-from-order.js') }}"></script>
-        <title>
-            Remove Item
-        </title>
-    </head>
-    <body>
-        <h1>
-            Remove Item to Order {{ x }}
-        </h1>
-        <form id="form">
-            <input id="itemId" autocomplete="off" autofocus placeholder="Item ID">
-            <input type="submit" value="Remove">
-        </form>
-    </body>
+<head>
+    <script src="{{ url_for('static', filename='remove-item-from-order.js') }}"></script>
+    <title>
+        Remove Item
+    </title>
+<!--    <link rel="stylesheet" type="text/css" href= "css/style-remove-item-from-order.css" />-->
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-remove-item-from-order.css') }}" />
+
+</head>
+<body background="{{ url_for('static', filename='Picture1.png') }}">
+    <div class="header">
+        <h1>Food Preservation System</h1>
+    </div>
+
+    <div class="navbar">
+        <a href="{{ url_for('return_home') }}" >Home</a>
+        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('index1') }}">Item</a>
+        <a href="{{ url_for('manage') }}">Manage Item</a>
+        <a href="{{ url_for('logout') }}" class="right">Logout</a>
+
+        <div class="dropdown">
+            <button class="dropbtn" > Order
+            </button>
+            <div class="dropdown-content">
+                <a href="#">Add order</a>
+                <a href="#" class="active">Search order</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    <h1>
+        Remove Item from Order {{ x }}
+    </h1>
+    <form id="form">
+        <input type="text" id="itemId" autocomplete="off" autofocus placeholder="Item ID">
+        <p></p>
+        <input type="submit" value="Remove">
+    </form>
+    </div>
+</body>
 </html>
