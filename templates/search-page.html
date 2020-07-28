@@ -10,23 +10,31 @@
 
 <body background="{{ url_for('static', filename='Picture1.png') }}">
 
-    <div class="header">
+    <div class="header" style=" background-image: url(static/header.jpg); background-repeat: no-repeat; ">
         <h1>Food Preservation System</h1>
     </div>
 
     <div class="navbar">
         <a href="{{ url_for('return_home') }}" >Home</a>
         <a href="#" class="active">Search</a>
-        <a href="{{ url_for('index1') }}">Item</a>
-        <a href="{{ url_for('manage') }}">Manage Item</a>
+        <a href="{{ url_for('device_control') }}">Device control</a>
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
+
+        <div class="dropdowna">
+            <button class="dropbtna" > Item
+            </button>
+            <div class="dropdown-contenta">
+                <a href="{{ url_for('index1') }}">Imports item</a>
+                <a href="{{ url_for('manage') }}" >Manage item</a>
+            </div>
+        </div>
 
         <div class="dropdown">
             <button class="dropbtn"> Order
             </button>
             <div class="dropdown-content">
                 <a href="{{ url_for('order') }}">Search order</a>
-                <a href="#">Add order</a>
+                <a href="{{ url_for('create_order') }}">Add order</a>
             </div>
         </div>
     </div>
@@ -34,16 +42,16 @@
     <div class="timeform">
         <form action="{{ url_for('get') }}" method="post">
             <label><h4>From:</h4> </label>
-            <input type="number" name="fday" placeholder="Day">
-            <input type="number" name="fmonth" placeholder="Month">
-            <input type="number" name="fyear" placeholder="Year">
+            <input type="number" min="1" max="31" name="fday" placeholder="Day">
+            <input type="number" min="1" max="12" name="fmonth" placeholder="Month">
+            <input type="number" min="2000" max="2025" name="fyear" placeholder="Year">
             <input type="number" min="0" max="23" name="fhour" placeholder="Hour">:
             <input type="number" min="0" max="59" name="fminute" placeholder="Minute">
 
             <label><h4>To:</h4> </label>
-            <input type="number" name="tday" placeholder="Day">
-            <input type="number" name="tmonth" placeholder="Month">
-            <input type="number" name="tyear" placeholder="Year">
+            <input type="number" min="1" max="31" name="tday" placeholder="Day">
+            <input type="number" min="1" max="12" name="tmonth" placeholder="Month">
+            <input type="number" min="2000" max="2025" name="tyear" placeholder="Year">
             <input type="number" min="0" max="23" name="thour" placeholder="Hour">:
             <input type="number" min="0" max="59" name="tminute" placeholder="Minute">
             <button>Search</button>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device control</title>
+    <script src="{{ url_for('static', filename='device-control.js') }}"></script>
+<!--     <link rel="stylesheet" type="text/css" href= "css/style-device-control.css" />-->
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-device-control.css') }}" />
+</head>
+<body background="Picture1.png">
+
+    <div class="header" style=" background-image: url(static/header.jpg); background-repeat: no-repeat; ">
+        <h1>Food Preservation System</h1>
+    </div>
+
+     <div class="navbar">
+        <a href="{{ url_for('return_home') }}" >Home</a>
+        <a href="{{ url_for('search') }}">Search</a>
+         <a href="{{ url_for('device_control') }}" class="active">Device control</a>
+        <a href="{{ url_for('logout') }}" class="right">Logout</a>
+
+        <div class="dropdown0">
+            <button class="dropbtn0" > Item
+            </button>
+            <div class="dropdown-content0">
+                <a href="{{ url_for('index1') }}">Imports item</a>
+                <a href="{{ url_for('manage') }}" >Manage item</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn"> Order
+            </button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('create_order') }}">Add order</a>
+                <a href="{{ url_for('order') }}">Search order</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>
+            Device control
+        </h1>
+        <form id="form">
+            <input type="text" id="air" autocomplete="off" autofocus placeholder="Air conditioner temperature here">
+            <p></p>
+            <input type="text" id="fan" autocomplete="off" autofocus placeholder="Fan speed here">
+            <p></p>
+            <button id="confirm" type="submit">Confirm</button>
+        </form>
+    </div>
+</body>
+</html>

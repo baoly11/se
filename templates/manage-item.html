@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Specific Item</title>
-<!--        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">-->
-<!--    <link rel="stylesheet" href="static/manage_items.css">-->
-<!--    <script src="{{ url_for('static', filename='manage_items.js') }}"></script>-->
+    <title>Manage item</title>
+<!--       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">-->
+<!--       <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>-->
+    <link rel="stylesheet" href="static/manage_items.css">
+    <script src="{{ url_for('static', filename='manage_items.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style-manage-item.css">
 </head>
-
 <body background="/static/Picture1.png">
-    <div class="header" style=" background-image: url(../static/header.jpg); background-repeat: no-repeat; ">
+    <div class="header" style=" background-image: url(static/header.jpg); background-repeat: no-repeat; ">
         <h1>Food Preservation System</h1>
     </div>
 
     <div class="navbar">
         <a href="/home" >Home</a>
-        <a href="{{ url_for('search') }}" >Search</a>
+        <a href="{{ url_for('search') }}">Search</a>
         <a href="/device-control">Device control</a>
         <a href="/" class="right">Logout</a>
 
@@ -24,7 +24,7 @@
             </button>
             <div class="dropdown-contenta">
                 <a href="/item">Imports item</a>
-                <a href="/manage" class="active" >Manage item</a>
+                <a href="/manage" class="active">Manage item</a>
             </div>
         </div>
 
@@ -38,12 +38,17 @@
         </div>
     </div>
 
+
     <div class="list">
-        {% for feature in info %}
+        {% for item in items %}
             <li>
-                # ID: {{ feature.item_id }} - Name: {{ feature.item_name }} - Quantity: {{ feature.item_quantity }} - Time: {{feature.import_time}} - Importer: {{feature.import_man}}
+                <a href="/specific_item/{{item.item_id}}">
+                    # ID: {{ item.item_id }} - Name: {{ item.name }} - Quantity: {{ item.quantity }}
+                </a>
             </li>
+
         {% endfor %}
+
     </div>
 
 
