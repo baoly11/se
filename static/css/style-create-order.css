@@ -15,7 +15,7 @@ body {
 }
 
 .header h1 {
-    font-size: 60px;
+    font-size: 80px;
     text-align: center;
 }
 
@@ -128,4 +128,53 @@ input[type=submit] {
   width: 100%;
 }
 
+.dropdowna {
+  float: left;
+  overflow: hidden;
+}
 
+.dropdowna .dropbtna {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: black;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.navbar a:hover, .dropdowna:hover .dropbtna {
+  background-color: #FFE8CB;
+}
+
+.dropdown-contenta {
+  display: none;
+  position: absolute;
+  background-color: #E4F2B5;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-contenta a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-contenta a:hover {
+  background-color: #FFE8CB;
+}
+
+.dropdowna:hover .dropdown-contenta {
+  display: block;
+}
+
+.dropdown-contenta a.active {
+    background-color: #FFC000;
+    color: white;
+}

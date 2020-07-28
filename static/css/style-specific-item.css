@@ -1,7 +1,8 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0;
-  
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 * {
@@ -53,7 +54,7 @@ body {
   text-decoration: none;
 }
 
-.navbar .dropdown button.dropbtn {
+.navbar a.active {
     background-color: #FFC000;
     color: white;
 }
@@ -107,10 +108,6 @@ body {
 .dropdown:hover .dropdown-content {
   display: block;
 }
-.dropdown-content a.active {
-    background-color: #FFC000;
-    color: white;
-}
 
 .logo-img {
     float: left;
@@ -118,102 +115,56 @@ body {
     margin: 10px 15px 15px 10px;
 }
 
-input[type=text], select, textarea {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-}
-
 label {
-  padding: 12px 12px 12px 0;
-  display: inline-block;
+    display: inline-block;
 }
 
-input[type=submit] {
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  float: right;
+input, label {
+    cursor: pointer;
+    display: inline-block;
+    padding: 10px;
 }
 
-input[type=submit]:hover {
-  background-color: #45a049;
+.timeform button:hover {
+    background-color: #FFC000;
+    color: black;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
-button:hover {
-  background-color: #45a049;
-}
-
-button:disabled{
-  background-color: #b3b3cc;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:enabled{
-  background-color: #45a049;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.op button{
-  display: inline-block;
-  width: 150px;
-  height: 50px;
+.timeform button {
+   width: 100px;
+   height: 39px;
+   border-radius: 10px;
+   font-size: 16px;
+   background-color: #FFE8CB;
+   border: none;
+   color: black;
+   transition-duration: 0.4s;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
 
 }
 
-.container {
-  margin-top: 10px;
-  border-radius: 5px;
-  background-color: #f2f2f2;
-  padding: 20px;
+.timeform {
+   text-align: center;
+}
+
+
+.result {
+  background-color: white;
+  width: 35%;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
   width: 100%;
- 
 }
 
-.col-25 {
-  float: left;
-  width: 25%;
-  margin-top: 6px;
+.sticky + .result {
+  padding-top: 60px;
 }
-
-.col-55 {
-  float: left;
-  width: 55%;
-  margin-top: 6px;
-}
-.col-20 {
-  float: left;
-  width: 20%;
-  margin-top: 6px;
-}
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-  .col-25, .col-55, .col-20, input[type=submit] {
-    width: 100%;
-    margin-top: 0;
-  }
-}
-
 
 .dropdowna {
   float: left;
@@ -262,6 +213,21 @@ button:enabled{
 }
 
 .dropdown-contenta a.active {
+    background-color: #FFC000;
+    color: white;
+}
+
+.list {
+  text-align: left;
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+  width: 100%;
+
+}
+
+.navbar .dropdowna button.dropbtn {
     background-color: #FFC000;
     color: white;
 }
