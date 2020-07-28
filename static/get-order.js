@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                  }
                  else {
-                    alert("Cannot find order!");
+                    alert(data.msg);
                  }
             }
             else {
