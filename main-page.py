@@ -3,9 +3,9 @@ from flask import Flask, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-# from flask_socketio import SocketIO, emit
 from datetime import datetime
-# import requests
+import json
+import paho.mqtt.publish as publish
 
 
 app = Flask(__name__)
@@ -27,7 +27,6 @@ current_user = 'Guest'
 user_name = 'user1'
 password = "12345"
 current_order_id = None
-
 
 @app.route("/")
 def index():
@@ -76,24 +75,39 @@ def search():
 
 @app.route('/search-result', methods=["POST"])
 def get():
-    begin_date = f"""{check_input(request.form.get("fyear"))}-{check_input(request.form.get("fmonth")):02d}-{check_input(request.form.get("fday")):02d} {check_input(request.form.get("fhour")):02d}:{check_input(request.form.get("fminute")):02d}:00"""
-    end_date = f"""{check_input(request.form.get("tyear"))}-{check_input(request.form.get("tmonth")):02d}-{check_input(request.form.get("tday")):02d} {check_input(request.form.get("thour")):02d}:{check_input(request.form.get("tminute")):02d}:00"""
+    begin_date = f"""{check_input(request.form.get("fyear"),"")}-{check_input(request.form.get("fmonth"),"month"):02d}-{check_input(request.form.get("fday"),"day"):02d} {check_input(request.form.get("fhour"),"hour"):02d}:{check_input(request.form.get("fminute"),"min"):02d}:00"""
+    end_date = f"""{check_input(request.form.get("tyear"),"")}-{check_input(request.form.get("tmonth"),"month"):02d}-{check_input(request.form.get("tday"),"day"):02d} {check_input(request.form.get("thour"),"hour"):02d}:{check_input(request.form.get("tminute"),"min"):02d}:00"""
     result = []
     print(begin_date)
     print(end_date)
-    data1 = db.execute(f"""SELECT * FROM temp_air WHERE time BETWEEN '{begin_date}'::timestamp AND '{end_date}'::timestamp""").fetchall()
-    data2 = db.execute(f"""SELECT * FROM light WHERE time BETWEEN '{begin_date}'::timestamp AND '{end_date}'::timestamp""").fetchall()
+    try:
+        data1 = db.execute(f"""SELECT * FROM temp_air WHERE time BETWEEN '{begin_date}'::timestamp AND '{end_date}'::timestamp""").fetchall()
+        data2 = db.execute(f"""SELECT * FROM light WHERE time BETWEEN '{begin_date}'::timestamp AND '{end_date}'::timestamp""").fetchall()
+    except:
+        result = ["Invalid input"]
+        return render_template("display-search.html", r=result)
     for x in data1:
         result.append(f"Time: {x[4]}    |    Device ID: {x[3]}    |    Temperature: {x[1]}    |    Humidity: {x[2]}")
     for x in data2:
         result.append(f"Time: {x[3]}    |    Device ID: {x[2]}    |    Light intensity: {x[1]}")
     return render_template("display-search.html", r = result)
-
-
-def check_input(i):
+def check_input(i,type):
     if i == '':
         return 0
     else:
+        r = int(i)
+        if type == "day":
+            if r > 31 or r < 1:
+                return 0
+        if type == "month":
+            if r > 12 or r < 1:
+                return 0
+        if type == "hour":
+            if r > 24 or r < 1:
+                return 0
+        if type == "min":
+            if r > 24 or r < 1:
+                return 0
         return int(i)
 
 
@@ -138,8 +152,7 @@ def update():
 
 @app.route("/order")
 def order():
-    global current_user
-    if current_user == 'Guest':
+    if check_user():
         return "Please login!"
     return render_template("order.html")
 
@@ -148,11 +161,12 @@ def order():
 def get_order():
     global current_order_id
     id = request.form.get("id")
-    order = search_order(id)
-    if not order:
+    result = search_order(id)
+    if not result[0]:
         current_order_id = None
-        return jsonify({"success": True, "found": False})
+        return jsonify({"success": True, "found": False, "msg": result[1]})
     current_order_id = id
+    order = result[1]
     return jsonify({"success": True,
                     "id": order[0],
                     "name": order[1],
@@ -199,7 +213,12 @@ def add_item_to_order():
 def adding_item_to_order():
     global current_order_id
     item_id = request.form.get("itemId")
+    if item_id == '':
+        return jsonify({"success": True,
+                        "msg": "Please enter item id"})
     quantity = request.form.get("quantity")
+    if quantity == '':
+        quantity = 0;
     print(item_id)
     print(quantity)
     result = add_item_to_order_do(current_order_id, item_id, quantity)
@@ -218,6 +237,9 @@ def remove_item_from_order():
 def removing_item_from_order_do():
     global current_order_id
     item_id = request.form.get("itemId")
+    if item_id == '':
+        return jsonify({"success": True,
+                        "msg": "Please enter item id"})
     result = remove_item_from_order_do(current_order_id, item_id)
     return jsonify({"success": True,
                     "done": result[0],
@@ -234,7 +256,12 @@ def update_item_quantity_in_order():
 def update_item_quantity_in_order_do():
     global current_order_id
     item_id = request.form.get("itemId")
+    if item_id == '':
+        return jsonify({"success": True,
+                        "msg": "Please enter item id"})
     quantity = request.form.get("quantity")
+    if quantity == '':
+        quantity = 0;
     result = update_item_quantity_in_order_do(current_order_id, item_id, quantity)
     return jsonify({"success": True,
                     "done": result[0],
@@ -242,6 +269,8 @@ def update_item_quantity_in_order_do():
 
 @app.route("/create-order")
 def create_order():
+    if check_user():
+        return "Please login!"
     return render_template("create-order.html")
 
 @app.route("/creating-order", methods=["POST"])
@@ -255,16 +284,20 @@ def creating_order():
 
 @app.route("/item")
 def index1():
+    if check_user():
+        return "Please login!"
     return render_template("import_items.html")
 
 
 @app.route("/manage")
 def manage():
+    if check_user():
+        return "Please login!"
     try:
         items = db.execute("SELECT * FROM item ").fetchall()
     finally:
         db.close()
-    return render_template("manage_items.html", items=items)
+    return render_template("manage-item.html", items=items)
 
 
 @app.route("/import", methods=["POST"])
@@ -286,11 +319,16 @@ def import_product():
          "import_man": import_man})
     db.commit()
 
+    check_list = db.execute("SELECT item_id FROM item").fetchall()
 
-
-    db.execute("UPDATE item SET quantity = quantity + :item_quantity WHERE item_id = :item_id ",
-               {"item_quantity": item_quantity, "item_id": item_id})
-    db.commit()
+    if item_id in check_list:
+        db.execute("UPDATE item SET quantity = quantity + :item_quantity WHERE item_id = :item_id ",
+                   {"item_quantity": item_quantity, "item_id": item_id})
+        db.commit()
+    else:
+        db.execute(f"INSERT INTO item (item_id, name, quantity) VALUES (:item_id, :name, :quantity)", {"item_id": item_id, "name": item_name, "quantity": item_quantity})
+        db.commit()
+  
     return jsonify({"success": True, "response": "Done!"})
 
 
@@ -313,6 +351,8 @@ def updateItems():
 
 @app.route("/specific_item/<string:id>")
 def specific_item(id):
+    if check_user():
+        return "Please login!"
     try:
         info = db.execute("SELECT * FROM item_import WHERE item_id = :item_id ", {"item_id": id}).fetchall()
     finally:
@@ -320,6 +360,45 @@ def specific_item(id):
     return render_template('specific_item.html', info=info)
 
 
+@app.route("/device-control")
+def device_control():
+    if check_user():
+        return "Please login!"
+    return render_template('device-control.html')
+
+@app.route("/publish-to-device", methods=["POST"])
+def publish_to_device():
+    air = request.form.get("air")
+    fan = request.form.get("fan")
+    if air != '':
+        try:
+            air = int(air)
+        except:
+            return jsonify({"success": True,
+                            "msg": "Invalid input."})
+        if air > 100 or air < 1:
+            return jsonify({"success": True,
+                            "msg": "Invalid input."})
+    if fan != '':
+        try:
+            fan = int(fan)
+        except:
+            return jsonify({"success": True,
+                            "msg": "Invalid input."})
+        if fan > 100 or fan < 1:
+            return jsonify({"success": True,
+                            "msg": "Invalid input."})
+    p_data = {}
+    p_data["device_id"] = "Air"
+    p_data["value"] = f"{air}"
+    data1 = json.dumps([p_data])
+    publish.single("Control/AirCondition", data1, hostname="52.230.126.225")
+    p_data["device_id"] = "Fan"
+    p_data["value"] = f"{fan}"
+    data2 = json.dumps([p_data])
+    publish.single("Control/Fan", data2, hostname="52.230.126.225")
+    return jsonify({"success": True,
+                    "msg": "Done"})
 
 
 
@@ -331,18 +410,18 @@ def specific_item(id):
 
 
 
-
-
-
-
-
 def search_order(id):
     # Join order_info and item_in_order to get all the information
+    print(f"this is the id: {id}")
+    try:
+        int(id)
+    except:
+        return (False, "Wrong input type.")
     info = db.execute(
-        f"SELECT * FROM (SELECT * FROM order_info WHERE id={id}) AS O LEFT JOIN item_in_order ON O.id=item_in_order.order_id").fetchall()
+        f"SELECT * FROM (SELECT * FROM order_info WHERE id='{id}') AS O LEFT JOIN item_in_order ON O.id=item_in_order.order_id").fetchall()
     if not info:
         print("Cant find this order.")
-        return False
+        return (False, "Can't find this order.")
     # Get ID to Name list of item
     item_id_name = dict(db.execute("SELECT item_id,name FROM item ").fetchall())
     db.close()
@@ -356,12 +435,12 @@ def search_order(id):
             q.append(x[6])
             i_i.append(x[5])
     result = [info[0][0], info[0][1], info[0][2], info[0][3], i_n, q, i_i]
-    # print(result)
-    return result
+    print(result)
+    return (True, result)
 
 
 def check_complete_order(id, do = False):
-    info = search_order(id)
+    info = search_order(id)[1]
     if not info:
         print("Order does not exist")
         return (False, "Order does not exist")
@@ -399,7 +478,7 @@ def check_complete_order(id, do = False):
 
 def del_order(id):
     # Check if the order exist
-    info = search_order(id)
+    info = search_order(id)[1]
     if not info:
         print("order does not exist")
         return False
@@ -418,7 +497,7 @@ def del_order(id):
 
 def add_item_to_order_do(id, item, quantity):
     # Get the information of the order
-    info = search_order(id)
+    info = search_order(id)[1]
     print(info)
     if not info:
         print("Order does not exist")
@@ -444,7 +523,7 @@ def add_item_to_order_do(id, item, quantity):
 
 def remove_item_from_order_do(id, item):
     # Get the information of the order
-    info = search_order(id)
+    info = search_order(id)[1]
     if not info:
         print("Order does not exist")
         return (False, "Order does not exist")
@@ -470,7 +549,7 @@ def remove_item_from_order_do(id, item):
 
 def update_item_quantity_in_order_do(id, item, quantity):
     # Get the information of the order
-    info = search_order(id)
+    info = search_order(id)[1]
     if not info:
         print("Order does not exist")
         return False
@@ -515,3 +594,10 @@ def create_order_do(name, item_list):
     db.close()
     print(f"Finish adding order {name} with id: {new_id}")
     return (True, f"Finish adding order {name} with id: {new_id}")
+
+def check_user():
+    global current_user
+    if current_user == "Guest":
+        return True
+    else:
+        return False
