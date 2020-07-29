@@ -91,6 +91,7 @@ def get():
     for x in data2:
         result.append(f"Time: {x[3]}    |    Device ID: {x[2]}    |    Light intensity: {x[1]}")
     return render_template("display-search.html", r = result)
+
 def check_input(i,type):
     if i == '':
         return 0
@@ -401,6 +402,13 @@ def publish_to_device():
                     "msg": "Done"})
 
 
+@app.route("/report")
+def report():
+    return render_template('mail2.html')
+
+@app.route("/get-info-for-report", methods=["POST"])
+def info_report():
+    return jsonify({"success": True})
 
 
 ####################################################################################################################################################################################
