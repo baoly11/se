@@ -410,9 +410,6 @@ def publish_to_device():
 def report():
     return render_template('mail2.html')
 
-@app.route("/get-info-for-report", methods=["POST"])
-def info_report():
-    return jsonify({"success": True})
 
 
 ####################################################################################################################################################################################
