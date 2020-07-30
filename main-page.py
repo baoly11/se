@@ -135,6 +135,10 @@ def updateHomepage():
 @app.route("/device-setting")
 def device_setting():
     return render_template("device-setting.html")
+    
+@app.route("/getback")
+def getback():
+    return render_template("homepage.html")
 
 @app.route("/update", methods=["POST"])
 def update():
