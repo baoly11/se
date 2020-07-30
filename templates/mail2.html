@@ -2,19 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="description" content="contact form example">
-  <title>Statistic Report of the Warehouse</title>
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<script src="https://cdn.anychart.com/releases/8.0.0/js/anychart-base.min.js"></script>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
-
-    # BAR CHART
     <script src="{{ url_for('static', filename='statistic.js') }}"></script>
-
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
@@ -22,153 +16,307 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!--        <link rel="stylesheet" type="text/css" href= "../static/css/style-mail2.css" />-->
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-mail2.css') }}" />
 	<style>
-
 	html2canvas {
 		 width: auto !important;
 		 height: auto !important;
 	}
 	</style>
+    <script type="text/javascript">
+	window.onload = function () {
+
+		var chart1 = new CanvasJS.Chart("chartContainer1", {
+			animationEnabled: true,
+
+			title:{
+				text:"Air Humidity"
+			},
+			axisX:{
+				interval: 1
+			},
+			axisY2:{
+				interlacedColor: "rgba(1,77,101,.2)",
+				gridColor: "rgba(1,77,101,.1)",
+				title: "Unit"
+			},
+			data: [{
+				type: "column",
+				name: "companies",
+				axisYType: "secondary",
+				color: "#014D65",
+				dataPoints: [
+					{ y: 240, label: "Jan" },
+					{ y: 100, label: "Feb" },
+					{ y: 150, label: "Mar" },
+					{ y: 200, label: "Apr" },
+					{ y: 90, label: "May" },
+					{ y: 170, label: "June" },
+					{ y: 130, label: "July" },
+					{ y: 180, label: "Aug" },
+					{ y: 210, label: "Sep" },
+					{ y: 95, label: "Oct" },
+					{ y: 70, label: "Nov" },
+					{ y: 160, label: "Dec" }
+				]
+			}]
+		});
+		chart1.render();
+
+		console.log(chart1);
 
 
+
+		var chart2 = new CanvasJS.Chart("chartContainer2", {
+			animationEnabled: true,
+
+			title:{
+				text:"Light Intensity"
+			},
+			axisX:{
+				interval: 1
+			},
+			axisY2:{
+				interlacedColor: "rgba(1,77,101,.2)",
+				gridColor: "rgba(1,77,101,.1)",
+				title: "Unit"
+			},
+			data: [{
+				type: "column",
+				name: "Device 1",
+				axisYType: "secondary",
+				color: "#014D65",
+				dataPoints: [
+					{ y: 210, label: "Jan" },
+					{ y: 90, label: "Feb" },
+					{ y: 95, label: "Mar" },
+					{ y: 255, label: "Apr" },
+					{ y: 100, label: "May" },
+					{ y: 250, label: "June" },
+					{ y: 160, label: "July" },
+					{ y: 180, label: "Aug" },
+					{ y: 210, label: "Sep" },
+					{ y: 240, label: "Oct" },
+					{ y: 180, label: "Nov" },
+					{ y: 160, label: "Dec" }
+				]
+			}]
+		});
+
+		chart2.render();
+		console.log(chart2);
+
+		var chart3 = new CanvasJS.Chart("chartContainer3", {
+			animationEnabled: true,
+
+			title:{
+				text:"Temperature"
+			},
+			axisX:{
+				interval: 1
+			},
+			axisY2:{
+				interlacedColor: "rgba(1,77,101,.2)",
+				gridColor: "rgba(1,77,101,.1)",
+				title: "Unit"
+			},
+			data: [{
+				type: "column",
+				name: "Device 1",
+				axisYType: "secondary",
+				color: "#014D65",
+				dataPoints: [
+					{ y: 24, label: "Jan" },
+					{ y: 36, label: "Feb" },
+					{ y: 37, label: "Mar" },
+					{ y: 30, label: "Apr" },
+					{ y: 20, label: "May" },
+					{ y: 27, label: "June" },
+					{ y: 29, label: "July" },
+					{ y: 37, label: "Aug" },
+					{ y: 35, label: "Sep" },
+					{ y: 33, label: "Oct" },
+					{ y: 37, label: "Nov" },
+					{ y: 36, label: "Dec" }
+				]
+			}]
+		});
+		chart3.render();
+	}
+	</script>
+
+    <title>Statistic Report of the Warehouse</title>
 </head>
 
-<body>
+<body background="{{ url_for('static', filename='Picture1.png') }}">
+    <div class="header" style=" background-image: url(static/header.jpg); background-repeat: no-repeat; ">
+        <h1>Food Preservation System</h1>
+    </div>
+
+    <div class="navbar">
+        <a href="{{ url_for('return_home') }}" >Home</a>
+        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('device_control') }}">Device control</a>
+        <a href="{{ url_for('report') }}" class="active">Report</a>
+        <a href="{{ url_for('logout') }}" class="right">Logout</a>
+
+        <div class="dropdowna">
+            <button class="dropbtna" > Item
+            </button>
+            <div class="dropdown-contenta">
+                <a href="{{ url_for('index1') }}">Imports item</a>
+                <a href="{{ url_for('manage') }}" >Manage item</a>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropbtn"> Order
+            </button>
+            <div class="dropdown-content">
+                <a href="{{ url_for('order') }}">Search order</a>
+                <a href="{{ url_for('create_order') }}">Add order</a>
+            </div>
+        </div>
+    </div>
+
+
 
 <h1>Storage Report</h1>
 
-<form id="form" method="post">
+    <div class="timeform">
+        <form action="{{ url_for('get') }}" method="post">
+            <label><h4>From:</h4> </label>
+            <input type="number" min="1" max="31" name="fday" placeholder="Day">
+            <input type="number" min="1" max="12" name="fmonth" placeholder="Month">
+            <input type="number" min="2000" max="2025" name="fyear" placeholder="Year">
+            <input type="number" min="0" max="23" name="fhour" placeholder="Hour">:
+            <input type="number" min="0" max="59" name="fminute" placeholder="Minute">
 
-    <input name="day" id="day_s" type="text">
-    <input name="day" id="month_s" type="text">
-    <input name="day" id="year_s" type="text">
-    <input name="day" id="hour_s" type="text">
-    <input name="day" id="minute_s" type="text">
-    <input name="day" id="day_f" type="text">
-    <input name="day" id="month_f" type="text">
-    <input name="day" id="year_f" type="text">
-    <input name="day" id="hour_f" type="text">
-    <input name="day" id="minute_f" type="text">
+            <label><h4>To:</h4> </label>
+            <input type="number" min="1" max="31" name="tday" placeholder="Day">
+            <input type="number" min="1" max="12" name="tmonth" placeholder="Month">
+            <input type="number" min="2000" max="2025" name="tyear" placeholder="Year">
+            <input type="number" min="0" max="23" name="thour" placeholder="Hour">:
+            <input type="number" min="0" max="59" name="tminute" placeholder="Minute">
+            <button>Search</button>
+        </form>
+    </div>
 
-    <input type="submit" value="search">
+	<a href="javascript:genScreenshot()"><button style="background:aqua; cursor:pointer">Get Screenshot</button> </a>
+	<a id="test"></a>
+    <p></p>
+	<div id="chartContainer1" style="height: 330px; width: 40%;"></div>
+	<p></p>
+    <div id="chartContainer2" style="height: 330px; width: 40%;"></div>
+	<p></p>
+    <div id="chartContainer3" style="height: 330px; width: 40%;"></div>
 
+	<script>
+	function genScreenshot() {
+		html2canvas(document.body, {
+		  onrendered: function(canvas) {
+		  $('#box1').html("");
+				$('#box1').append(canvas);
+
+		  if (navigator.userAgent.indexOf("MSIE ") > 0 ||
+						navigator.userAgent.match(/Trident.*rv\:11\./))
+				{
+			var blob = canvas.msToBlob();
+
+			window.navigator.msSaveBlob(blob,'Test file.png');
+
+		  }
+		  else   {
+
+			$('#test').attr('href', canvas.toDataURL("image/png"));
+			doc = new jsPDF({
+						 unit: 'px',
+						 format: 'a4'
+					 });
+					doc.addImage(canvas.toDataURL("image/png"), 'JPEG', 0, 0);
+					doc.save('_reportStorage.pdf');
+					form.width(cache_width);
+			//$('#test').attr('download','Test file.png');
+			$('#test')[0].click();
+			 }
+
+		  }
+		});
+
+    }
+	</script>
+
+    <p></p>
+
+ <form action="https://script.google.com/macros/s/#####/exec" id="form" method="post">
+        Upload a file
+        <div id="data"></div>
+        <input name="file" id="uploadfile" type="file">
+        <input id="submit" type="submit">
     </form>
+    <script>
+    $('#uploadfile').on("change", function() {
+        var file = this.files[0];
+        var fr = new FileReader();
+        fr.fileName = file.name;
+        fr.onload = function(e) {
+            e.target.result
+            html = '<input type="hidden" name="data" value="' + e.target.result.replace(/^.*,/, '') + '" >';
+            html += '<input type="hidden" name="mimetype" value="' + e.target.result.match(/^.*(?=;)/)[0] + '" >';
+            html += '<input type="hidden" name="filename" value="' + e.target.fileName + '" >';
+            $("#data").empty().append(html);
+        }
+        fr.readAsDataURL(file);
+    });
+    </script>
 
+  <aside class="part2">
+      <p>If you want a copy of this report, please fill in the form below and click <b>SEND</b>.</p>
+      <p>An email will be in your inbox in just a minute.</p>
+   </aside>
 
-<!--	<a href="javascript:genScreenshot()"><button style="background:aqua; cursor:pointer">Get Screenshot</button> </a>-->
-<!--	<a id="test"></a>-->
-<!--    <p></p>-->
-<!--	<div id="chartContainer1" style="height: 330px; width: 40%;"></div>-->
-<!--	<p></p>-->
-<!--    <div id="chartContainer2" style="height: 330px; width: 40%;"></div>-->
-<!--	<p></p>-->
-<!--    <div id="chartContainer3" style="height: 330px; width: 40%;"></div>-->
+<!-- START HERE -->
+   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+   <!-- Style The Contact Form How Ever You Prefer -->
+   <link rel="stylesheet" href="style.css">
 
-<!--	<script>-->
-<!--	function genScreenshot() {-->
-<!--		html2canvas(document.body, {-->
-<!--		  onrendered: function(canvas) {-->
-<!--		  $('#box1').html("");-->
-<!--				$('#box1').append(canvas);-->
+  <form class="gform" method="POST" data-email="example@email.net"
+  action="https://script.google.com/macros/s/AKfycbyy8jLFS2ass8q0dOjjWDeuFLE5QJpmQXLF24uYaVcE4LS3iIc/exec">
+    <!-- change the form action to your script url -->
 
-<!--		  if (navigator.userAgent.indexOf("MSIE ") > 0 ||-->
-<!--						navigator.userAgent.match(/Trident.*rv\:11\./))-->
-<!--				{-->
-<!--			var blob = canvas.msToBlob();-->
+    <div class="form-elements">
+      <fieldset class="pure-group">
+        <label for="name">Name: </label>
+        <input id="name" name="name" />
+      </fieldset>
 
-<!--			window.navigator.msSaveBlob(blob,'Test file.png');-->
+      <fieldset class="pure-group">
+        <label for="email"><em>Your</em> Email Address:</label>
+        <input id="email" name="email" type="email" value="" required />
+      </fieldset>
 
-<!--		  }-->
-<!--		  else   {-->
+      <fieldset class="pure-group honeypot-field">
+        <label for="honeypot">To help avoid spam, utilize a Honeypot technique with a hidden text field; must be empty to submit the form! Otherwise, we assume the user is a spam bot.</label>
+        <input id="honeypot" type="text" name="honeypot" value="" />
+      </fieldset>
 
-<!--			$('#test').attr('href', canvas.toDataURL("image/png"));-->
-<!--			doc = new jsPDF({-->
-<!--						 unit: 'px',-->
-<!--						 format: 'a4'-->
-<!--					 });-->
-<!--					doc.addImage(canvas.toDataURL("image/png"), 'JPEG', 0, 0);-->
-<!--					doc.save('_reportStorage.pdf');-->
-<!--					form.width(cache_width);-->
-<!--			//$('#test').attr('download','Test file.png');-->
-<!--			$('#test')[0].click();-->
-<!--			 }-->
+      <button class="button-success pure-button button-xlarge">
+        <i class="fa fa-paper-plane"></i>&nbsp;SEND</button>
+    </div>
 
-<!--		  }-->
-<!--		});-->
+    <!-- Customise the Thankyou Message People See when they submit the form: -->
+    <div class="thankyou_message" style="display:none">
+        <h2>An email has been sent </h2>
+          <h2><em>Thanks</em> for using our application!</h2>
+    </div>
 
-<!--    }-->
-<!--	</script>-->
+  </form>
 
-<!--    <p></p>-->
-
-<!-- <form action="https://script.google.com/macros/s/#####/exec" id="form" method="post">-->
-<!--        Upload a file-->
-<!--        <div id="data"></div>-->
-<!--        <input name="file" id="uploadfile" type="file">-->
-<!--        <input id="submit" type="submit">-->
-<!--    </form>-->
-<!--    <script>-->
-<!--    $('#uploadfile').on("change", function() {-->
-<!--        var file = this.files[0];-->
-<!--        var fr = new FileReader();-->
-<!--        fr.fileName = file.name;-->
-<!--        fr.onload = function(e) {-->
-<!--            e.target.result-->
-<!--            html = '<input type="hidden" name="data" value="' + e.target.result.replace(/^.*,/, '') + '" >';-->
-<!--            html += '<input type="hidden" name="mimetype" value="' + e.target.result.match(/^.*(?=;)/)[0] + '" >';-->
-<!--            html += '<input type="hidden" name="filename" value="' + e.target.fileName + '" >';-->
-<!--            $("#data").empty().append(html);-->
-<!--        }-->
-<!--        fr.readAsDataURL(file);-->
-<!--    });-->
-<!--    </script>-->
-
-<!--  <aside class="part2">-->
-<!--      <p>If you want a copy of this report, please fill in the form below and click <b>SEND</b>.</p>-->
-<!--      <p>An email will be in your inbox in just a minute.</p>-->
-<!--   </aside>-->
-
-<!--&lt;!&ndash; START HERE &ndash;&gt;-->
-<!--   <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">-->
-<!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">-->
-<!--   &lt;!&ndash; Style The Contact Form How Ever You Prefer &ndash;&gt;-->
-<!--   <link rel="stylesheet" href="style.css">-->
-
-<!--  <form class="gform" method="POST" data-email="example@email.net"-->
-<!--  action="https://script.google.com/macros/s/AKfycbyy8jLFS2ass8q0dOjjWDeuFLE5QJpmQXLF24uYaVcE4LS3iIc/exec">-->
-<!--    &lt;!&ndash; change the form action to your script url &ndash;&gt;-->
-
-<!--    <div class="form-elements">-->
-<!--      <fieldset class="pure-group">-->
-<!--        <label for="name">Name: </label>-->
-<!--        <input id="name" name="name" />-->
-<!--      </fieldset>-->
-
-<!--      <fieldset class="pure-group">-->
-<!--        <label for="email"><em>Your</em> Email Address:</label>-->
-<!--        <input id="email" name="email" type="email" value="" required />-->
-<!--      </fieldset>-->
-
-<!--      <fieldset class="pure-group honeypot-field">-->
-<!--        <label for="honeypot">To help avoid spam, utilize a Honeypot technique with a hidden text field; must be empty to submit the form! Otherwise, we assume the user is a spam bot.</label>-->
-<!--        <input id="honeypot" type="text" name="honeypot" value="" />-->
-<!--      </fieldset>-->
-
-<!--      <button class="button-success pure-button button-xlarge">-->
-<!--        <i class="fa fa-paper-plane"></i>&nbsp;SEND</button>-->
-<!--    </div>-->
-
-<!--    &lt;!&ndash; Customise the Thankyou Message People See when they submit the form: &ndash;&gt;-->
-<!--    <div class="thankyou_message" style="display:none">-->
-<!--        <h2>An email has been sent </h2>-->
-<!--          <h2><em>Thanks</em> for using our application!</h2>-->
-<!--    </div>-->
-
-<!--  </form>-->
-
-<!--  &lt;!&ndash; Submit the Form to Google Using "AJAX" &ndash;&gt;-->
-<!--  <script data-cfasync="false" src="form-submission-handler.js"></script>-->
-<!--&lt;!&ndash; END &ndash;&gt;-->
+  <!-- Submit the Form to Google Using "AJAX" -->
+  <script data-cfasync="false" src="../static/form-submission-handler.js"></script>
+<!-- END -->
 
 </body>
 </html>

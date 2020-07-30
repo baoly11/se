@@ -19,7 +19,7 @@
         <a href="#" class="active">Search</a>
         <a href="{{ url_for('device_control') }}">Device control</a>
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
-
+        <a href="{{ url_for('report') }}">Report</a>
         <div class="dropdowna">
             <button class="dropbtna" > Item
             </button>
@@ -34,7 +34,7 @@
             </button>
             <div class="dropdown-content">
                 <a href="{{ url_for('order') }}">Search order</a>
-                <a href="#">Add order</a>
+                <a href="{{ url_for('create_order') }}">Add order</a>
             </div>
         </div>
     </div>
