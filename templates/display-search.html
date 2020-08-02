@@ -16,7 +16,7 @@
 
     <div class="navbar" id="navbar1">
         <a href="{{ url_for('return_home') }}" >Home</a>
-        <a href="#" class="active">Search</a>
+        <a href="{{ url_for('search') }}" class="active">Search</a>
         <a href="{{ url_for('device_control') }}">Device control</a>
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
         <a href="{{ url_for('report') }}">Report</a>
@@ -26,6 +26,7 @@
             <div class="dropdown-contenta">
                 <a href="{{ url_for('index1') }}">Imports item</a>
                 <a href="{{ url_for('manage') }}" >Manage item</a>
+                <a href="{{ url_for('delete_item') }}">Delete item</a>
             </div>
         </div>
 

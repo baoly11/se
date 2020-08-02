@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <script src="{{ url_for('static', filename='remove-item-from-order.js') }}"></script>
-    <title>
-        Remove Item
-    </title>
-<!--    <link rel="stylesheet" type="text/css" href= "css/style-remove-item-from-order.css" />-->
-    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-remove-item-from-order.css') }}" />
+    <head>
+        <title>Delete Item</title>
+<!--        <link rel="stylesheet" type="text/css" href= "css/style-delete-item.css" />-->
+        <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/style-delete-item.css') }}" />
+        <script src="{{ url_for('static', filename='delete-item.js') }}"></script>
 
-</head>
+    </head>
 <body background="{{ url_for('static', filename='Picture1.png') }}">
-
     <div class="header" style=" background-image: url(static/header.jpg); background-repeat: no-repeat; ">
         <h1>Food Preservation System</h1>
     </div>
@@ -22,33 +19,36 @@
         <a href="{{ url_for('logout') }}" class="right">Logout</a>
         <a href="{{ url_for('report') }}">Report</a>
         <div class="dropdowna">
-            <button class="dropbtna" > Item
+            <button class="dropbtna"  > Item
             </button>
             <div class="dropdown-contenta">
                 <a href="{{ url_for('index1') }}">Imports item</a>
                 <a href="{{ url_for('manage') }}" >Manage item</a>
-                <a href="{{ url_for('delete_item') }}">Delete item</a>
+                <a href="{{ url_for('delete_item') }}" class="active">Delete item</a>
             </div>
         </div>
+
 
         <div class="dropdown">
             <button class="dropbtn" > Order
             </button>
             <div class="dropdown-content">
-                <a href="{{ url_for('order') }}">Search order</a>
+                <a href="{{ url_for('order') }}" >Search order</a>
                 <a href="{{ url_for('create_order') }}">Add order</a>
             </div>
         </div>
     </div>
+
     <div class="container">
-    <h1>
-        Remove Item from Order {{ x }}
-    </h1>
-    <form id="form">
-        <input type="text" id="itemId" autocomplete="off" autofocus placeholder="Item ID">
-        <p></p>
-        <input type="submit" value="Remove">
-    </form>
+        <h1>
+            Delete item
+        </h1>
+        <form id="form">
+            <input type="text" id="item_id" autocomplete="off" autofocus placeholder="Item ID here">
+            <p></p>
+            <button id="confirm" type="submit">Confirm</button>
+        </form>
     </div>
+
 </body>
 </html>
