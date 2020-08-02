@@ -175,9 +175,10 @@ def get_order():
     return jsonify({"success": True,
                     "id": order[0],
                     "name": order[1],
-                    "date": order[2],
+                    "date": f"{order[2]}",
                     "status": order[3],
                     "item": order[4],
+                    "comp": "" if order[7]==None else f"{order[7]}",
                     "quantity": order[5],
                     "found": True})
 
@@ -196,7 +197,8 @@ def confirm_order():
     result = check_complete_order(id, True)
     return jsonify({"success": True,
                     "done": result[0],
-                    "msg": result[1]})
+                    "msg": result[1],
+                    "comp": result[2]})
 
 @app.route("/delete-order", methods=["POST"])
 def delete_order():
@@ -312,29 +314,35 @@ def import_product():
         return jsonify({"success": True, "response": "Wrong ID length"})
     try:
         item_id = str(request.form.get("item_id"))
-        item_name = str(request.form.get("item_name"))
+        item_name = str(request.form.get("item_name")).lower()
         item_quantity = int(request.form.get("item_quantity"))
         import_man = str(request.form.get("import_man"))
     except:
         return jsonify({"success": True, "response": "Wrong input type!"})
 
-    db.execute(
-        "INSERT INTO item_import (item_id, item_name, item_quantity, import_time, import_man) VALUES (:item_id, :item_name, :item_quantity, :import_time, :import_man)",
-        {"item_id": item_id, "item_name": item_name, "item_quantity": item_quantity, "import_time": import_time,
-         "import_man": import_man})
-    db.commit()
-
-    check_list = db.execute("SELECT item_id FROM item").fetchall()
+    check_list = [x[0] for x in db.execute("SELECT item_id FROM item").fetchall()]
+    print(check_list)
 
     if item_id in check_list:
-        db.execute("UPDATE item SET quantity = quantity + :item_quantity WHERE item_id = :item_id ",
-                   {"item_quantity": item_quantity, "item_id": item_id})
-        db.commit()
+        check_name = db.execute(f"SELECT name FROM item WHERE item_id='{item_id}'").fetchall()[0][0]
+        if check_name == item_name:
+            db.execute("UPDATE item SET quantity = quantity + :item_quantity WHERE item_id = :item_id ",
+                       {"item_quantity": item_quantity, "item_id": item_id})
+            db.commit()
+
+            db.execute(
+                "INSERT INTO item_import (item_id, item_name, item_quantity, import_time, import_man) VALUES (:item_id, :item_name, :item_quantity, :import_time, :import_man)",
+                {"item_id": item_id, "item_name": item_name, "item_quantity": item_quantity, "import_time": import_time,
+                 "import_man": import_man})
+            db.commit()
+
+            return jsonify({"success": True, "response": "Done!"})
+        else:
+            return jsonify({"success": True, "response": "Wrong item name!"})
     else:
         db.execute(f"INSERT INTO item (item_id, name, quantity) VALUES (:item_id, :name, :quantity)", {"item_id": item_id, "name": item_name, "quantity": item_quantity})
         db.commit()
-  
-    return jsonify({"success": True, "response": "Done!"})
+        return jsonify({"success": True, "response": "Done!"})
 
 
 @app.route("/updateItems", methods=["POST"])
@@ -405,6 +413,20 @@ def publish_to_device():
     return jsonify({"success": True,
                     "msg": "Done"})
 
+@app.route("/delete-item")
+def delete_item():
+    if check_user():
+        return "Please login!"
+    return render_template('delete-item.html')
+
+@app.route("/deleting-item",methods=["POST"])
+def deleting_order():
+    id = request.form.get("id")
+    print(f"deleting {id}")
+    result = delete_item_do(id)
+    return jsonify({"success": True,
+                    "done": result[0],
+                    "msg": result[1]})
 
 @app.route("/report")
 def report():
@@ -438,12 +460,13 @@ def search_order(id):
     i_n = []
     q = []
     i_i = []
+    print(info)
     for x in info:
         if x[5] is not None:
-            i_n.append(item_id_name[x[5]])
-            q.append(x[6])
-            i_i.append(x[5])
-    result = [info[0][0], info[0][1], info[0][2], info[0][3], i_n, q, i_i]
+            i_n.append(item_id_name[x[6]])
+            q.append(x[7])
+            i_i.append(x[6])
+    result = [info[0][0], info[0][1], info[0][2], info[0][3], i_n, q, i_i, info[0][4]]
     print(result)
     return (True, result)
 
@@ -474,16 +497,20 @@ def check_complete_order(id, do = False):
                 db.execute(f""" UPDATE item SET quantity={new_quantity} WHERE item_id='{item_id}' """)
                 db.commit()
     msg = ''
+    comp = ''
     if do:
-        db.execute(f"""UPDATE order_info SET status=true WHERE id='{id}'""")
+        t = datetime.now()
+        time = t.strftime('%Y-%m-%d %H:%M:%S')
+        db.execute(f"""UPDATE order_info SET status=true, time_comp='{time}' WHERE id='{id}'""")
         db.commit()
         print(f"Order with ID: {id} is completed")
         msg = f"Order with ID: {id} is completed"
+        comp = f"{time}"
     else:
         print(f"We have enough item for the order with ID: {id}")
         msg = f"We have enough item for the order with ID: {id}"
     db.close()
-    return (True, msg)
+    return (True, msg, comp)
 
 def del_order(id):
     # Check if the order exist
@@ -519,6 +546,13 @@ def add_item_to_order_do(id, item, quantity):
     if item not in item_id_name:
         print(f"{item} is not in storage")
         return (False, f"{item} is not in storage")
+    if quantity == '':
+        quantity = 0
+    else:
+        try:
+            int(quantity)
+        except:
+            return(False, "Invalid quantity")
     # Check if the order already has that item
     if len(info[6]) > 0:
         if item in info[6]:
@@ -540,6 +574,7 @@ def remove_item_from_order_do(id, item):
     if info[3]:
         print("Cannot update - Order is already completed")
         return (False, "Cannot update - Order is already completed")
+
     # Check if item is in order
     if len(info[6]) > 0:
         if item not in info [6]:
@@ -566,6 +601,15 @@ def update_item_quantity_in_order_do(id, item, quantity):
     if info[3]:
         print("Cannot update - Order is already completed")
         return False
+
+    if quantity == '':
+        quantity = 0
+    else:
+        try:
+            int(quantity)
+        except:
+            return(False, "Invalid quantity")
+
     # Check if item is in order
     if len(info[6]) > 0:
         if item not in info [6]:
@@ -604,9 +648,25 @@ def create_order_do(name, item_list):
     print(f"Finish adding order {name} with id: {new_id}")
     return (True, f"Finish adding order {name} with id: {new_id}")
 
+def delete_item_do(item_id):
+    check_list = dict(db.execute("SELECT item_id,name FROM item ").fetchall())
+    if item_id not in check_list:
+        print(f"{item_id} is not in storage.")
+        return (False, f"{item_id} is not in storage.")
+    else:
+        db.execute(f"DELETE FROM item_in_order WHERE item_id='{item_id}'")
+        db.commit
+        db.execute(f"DELETE FROM item WHERE item_id='{item_id}'")
+        db.commit()
+        print(f"Detele item {item_id} from storage")
+        db.close()
+        return (True, "Done.")
+
 def check_user():
     global current_user
     if current_user == "Guest":
         return True
     else:
         return False
+
+
